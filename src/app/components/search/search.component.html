@@ -1,0 +1,80 @@
+<div class="search-container">
+  
+  <div class="search-header">
+    <h1 class="text-gradient">Explore Sphere</h1>
+    
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
+      <input 
+        type="text" 
+        [(ngModel)]="query" 
+        (keyup.enter)="search()" 
+        placeholder="Find creators, posts, or topics..."
+      />
+      @if (query) {
+        <button mat-icon-button (click)="query = ''; search()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading) {
+    <div style="padding: 100px; text-align: center;">
+      <mat-progress-spinner mode="indeterminate" diameter="40" style="margin: 0 auto;"></mat-progress-spinner>
+      <p style="margin-top: 20px; color: var(--prism-text-muted);">Searching across the universe...</p>
+    </div>
+  }
+
+  @if (!query && !loading) {
+    <div class="search-hint">
+      <mat-icon>auto_awesome</mat-icon>
+      <p>Discover new connections and trending stories</p>
+    </div>
+  }
+
+  @if (!loading && (users.length > 0 || posts.length > 0)) {
+    <mat-tab-group class="results-tabs">
+      
+      <mat-tab label="People">
+        <div class="users-list">
+          @for (user of users; track user.userId) {
+            <div class="user-row">
+              <div class="user-avatar" [routerLink]="['/profile', user.userId]">
+                @if (user.avatarUrl) {
+                  <img [src]="user.avatarUrl" />
+                } @else {
+                  <span class="initials">{{ user.fullName[0] }}</span>
+                }
+              </div>
+              <div class="user-info" [routerLink]="['/profile', user.userId]">
+                <div class="uname">{{ user.userName }}</div>
+                <div class="uhandle">{{ user.fullName }}</div>
+              </div>
+              <button mat-raised-button color="primary" [routerLink]="['/profile', user.userId]">
+                View Profile
+              </button>
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Posts">
+        <div class="posts-list" style="padding: 32px 0;">
+          @for (post of posts; track post.postId) {
+            <app-post-card [post]="post"></app-post-card>
+          }
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  }
+
+  @if (!loading && query && users.length === 0 && posts.length === 0) {
+    <div class="no-results">
+      <mat-icon>sentiment_very_dissatisfied</mat-icon>
+      <p>We couldn't find any results for "<strong>{{ query }}</strong>"</p>
+    </div>
+  }
+
+</div>

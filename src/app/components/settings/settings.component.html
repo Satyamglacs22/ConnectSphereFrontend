@@ -1,0 +1,140 @@
+<div class="settings-container">
+  <h1 class="text-gradient"><mat-icon>settings</mat-icon> Settings</h1>
+
+  <mat-tab-group class="settings-tabs">
+    <!-- Edit Profile Tab -->
+    <mat-tab label="Profile">
+      <div class="tab-body">
+        <mat-card class="settings-card">
+          <div class="section-title"><mat-icon>face</mat-icon> Personal Information</div>
+          
+          <div class="avatar-section">
+            <div class="avatar-preview">
+              @if (currentUser?.avatarUrl) {
+                <img [src]="currentUser!.avatarUrl" class="avatar-img" />
+              } @else {
+                <div class="avatar-initials">{{ currentUser?.fullName?.[0] }}</div>
+              }
+              <label class="avatar-overlay" for="avatar-input">
+                <mat-icon>camera_alt</mat-icon>
+              </label>
+              <input id="avatar-input" type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none;" />
+            </div>
+            <div class="avatar-info">
+              <p>Change your profile picture</p>
+              <button mat-button color="primary" (click)="triggerAvatarUpload()">Upload New</button>
+            </div>
+          </div>
+
+          <form (ngSubmit)="updateProfile()" #profileForm="ngForm">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Full Name</mat-label>
+              <mat-icon matPrefix>person_outline</mat-icon>
+              <input matInput [(ngModel)]="editData.fullName" name="fullName" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Bio</mat-label>
+              <mat-icon matPrefix>notes</mat-icon>
+              <textarea matInput [(ngModel)]="editData.bio" name="bio" rows="3" placeholder="Tell the sphere about yourself..."></textarea>
+            </mat-form-field>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+                <mat-icon *ngIf="!loading">check</mat-icon>
+                <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+                <span>Save Changes</span>
+              </button>
+            </div>
+          </form>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Security Tab -->
+    <mat-tab label="Security">
+      <div class="tab-body">
+        <mat-card class="settings-card">
+          <div class="section-title"><mat-icon>lock</mat-icon> Change Password</div>
+          
+          <form (ngSubmit)="changePassword()" #passForm="ngForm">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Current Password</mat-label>
+              <mat-icon matPrefix>lock_open</mat-icon>
+              <input matInput type="password" [(ngModel)]="passData.oldPassword" name="oldPassword" required />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>New Password</mat-label>
+              <mat-icon matPrefix>vpn_key</mat-icon>
+              <input matInput type="password" [(ngModel)]="passData.newPassword" name="newPassword" required />
+            </mat-form-field>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+                <mat-icon *ngIf="!loading">vpn_key</mat-icon>
+                <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
+                <span>Update Password</span>
+              </button>
+            </div>
+          </form>
+        </mat-card>
+
+        <mat-card class="settings-card danger-zone">
+          <div class="section-title"><mat-icon>report_problem</mat-icon> Danger Zone</div>
+          <p class="danger-desc">Once you delete your account, there is no going back. Please be certain.</p>
+          <button mat-raised-button color="warn" (click)="deleteAccount()">
+            <mat-icon>delete_forever</mat-icon> Delete Account
+          </button>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Privacy & Blocking Tab -->
+    <mat-tab label="Privacy">
+      <div class="tab-body">
+        <mat-card class="settings-card">
+          <div class="section-title"><mat-icon>visibility</mat-icon> Account Privacy</div>
+          
+          <div class="privacy-row">
+            <div class="privacy-info">
+              <div class="privacy-label">
+                <mat-icon [class.icon-locked]="currentUser?.isPrivate">
+                  {{ currentUser?.isPrivate ? 'lock' : 'public' }}
+                </mat-icon>
+                <span>Private Account</span>
+              </div>
+              <p class="privacy-desc">When private, only people you approve can see your posts.</p>
+            </div>
+            <mat-slide-toggle [checked]="currentUser?.isPrivate" (change)="togglePrivacy()"></mat-slide-toggle>
+          </div>
+        </mat-card>
+
+        <mat-card class="settings-card">
+          <div class="section-title"><mat-icon>block</mat-icon> Blocked Accounts</div>
+          
+          <div class="blocked-list">
+            @for (user of blockedUsers; track user.userId) {
+              <div class="blocked-item">
+                <div class="blocked-user">
+                  <div class="b-avatar">
+                    <img [src]="user.avatarUrl" *ngIf="user.avatarUrl" />
+                  </div>
+                  <div class="b-name">@{{ user.userName }}</div>
+                </div>
+                <button mat-button color="warn" (click)="unblock(user.userId)">Unblock</button>
+              </div>
+            }
+
+            @if (blockedUsers.length === 0) {
+              <div style="text-align: center; padding: 40px; color: var(--prism-text-muted);">
+                <mat-icon style="font-size: 40px; width: 40px; height: 40px;">sentiment_satisfied</mat-icon>
+                <p>No blocked accounts</p>
+              </div>
+            }
+          </div>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

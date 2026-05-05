@@ -1,0 +1,127 @@
+@if (!isDeleted()) {
+<mat-card class="post-card">
+  
+  <!-- Header -->
+  <div class="post-header">
+    <div class="author-avatar" [routerLink]="['/profile', post.userId]">
+      @if (author?.avatarUrl) {
+        <img [src]="author!.avatarUrl" class="avatar-img" />
+      } @else {
+        <div class="no-img">{{ author?.fullName?.[0] || '?' }}</div>
+      }
+    </div>
+    <div class="author-meta">
+      <div class="author-name" [routerLink]="['/profile', post.userId]">
+        {{ author?.userName || 'User ' + post.userId }}
+      </div>
+      <div class="post-time">
+        {{ post.createdAt | timeAgo }}
+        @if (post.visibility !== 'PUBLIC') {
+          &bull; <mat-icon style="font-size: 10px; width: 10px; height: 10px; vertical-align: middle;">lock</mat-icon>
+        }
+      </div>
+    </div>
+    <button mat-icon-button [matMenuTriggerFor]="postMenu">
+      <mat-icon>more_horiz</mat-icon>
+    </button>
+  </div>
+
+  <!-- Media Section -->
+  @if (getMediaList().length > 0) {
+    <div class="post-media-container" (dblclick)="onDoubleTap()">
+      <div class="carousel-track" [style.transform]="'translateX(-' + (currentMediaIndex() * 100) + '%)'" style="display: flex; transition: transform 0.5s ease;">
+        @for (url of getMediaList(); track url) {
+          <div class="carousel-item" style="flex: 0 0 100%; width: 100%;">
+            <img [src]="url" class="main-media" alt="Post content" />
+          </div>
+        }
+      </div>
+      
+      @if (getMediaList().length > 1) {
+        <button mat-icon-button class="carousel-nav prev" (click)="prevMedia($event)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white;">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-icon-button class="carousel-nav next" (click)="nextMedia($event)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white;">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      }
+
+      <mat-icon class="heart-pop" [class.animate]="showHeartPop()">favorite</mat-icon>
+    </div>
+  } @else {
+    <div class="text-post-content" style="padding: 40px 20px; font-size: 18px; text-align: center; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--prism-border);">
+      {{ post.content }}
+    </div>
+  }
+
+  <!-- Content & Actions -->
+  <div class="post-content-area">
+    <div class="action-row">
+      <button mat-icon-button (click)="toggleLike()" [class.active-like]="hasLiked()">
+        <mat-icon>{{ hasLiked() ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleComments()">
+        <mat-icon>chat_bubble_outline</mat-icon>
+      </button>
+      <div class="spacer"></div>
+      <button mat-icon-button (click)="toggleBookmark()" [class.active-bookmark]="isBookmarked()">
+        <mat-icon>{{ isBookmarked() ? 'bookmark' : 'bookmark_border' }}</mat-icon>
+      </button>
+    </div>
+
+    <div class="stat-row">
+      {{ likeCount() | number }} likes
+    </div>
+
+    <div class="caption">
+      <span class="mention" [routerLink]="['/profile', post.userId]">{{ author?.userName }}</span>
+      {{ post.content }}
+    </div>
+
+    @if (getHashtags().length > 0) {
+      <div class="tags-row">
+        @for (tag of getHashtags(); track tag) {
+          <span class="tag" (click)="searchHashtag(tag)">#{{ tag }}</span>
+        }
+      </div>
+    }
+
+    <div class="comments-summary">
+      @if (post.commentCount > 0) {
+        <div class="view-all" (click)="toggleComments()">
+          {{ showComments ? 'Hide' : 'View all ' + post.commentCount }} comments
+        </div>
+      }
+      
+      @if (showComments) {
+        <div class="comments-list" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+          @for (c of comments(); track c.commentId) {
+            <div class="comment-item" style="font-size: 13px;">
+              <strong style="color: white; margin-right: 6px;">{{ c.authorName }}</strong>
+              <span style="color: #e2e8f0;">{{ c.content }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="comment-input-wrap">
+        <input type="text" placeholder="Add a comment..." [(ngModel)]="newComment" (keyup.enter)="addComment()" />
+        <button mat-button class="post-btn" [disabled]="!newComment.trim()" (click)="addComment()">Post</button>
+      </div>
+    </div>
+  </div>
+
+</mat-card>
+
+<mat-menu #postMenu="matMenu" xPosition="before" class="prism-menu">
+  <button mat-menu-item (click)="share()"><mat-icon>link</mat-icon> Copy Link</button>
+  @if (isOwnPost) {
+    <button mat-menu-item (click)="startEdit()"><mat-icon>edit</mat-icon> Edit</button>
+    <button mat-menu-item class="logout-item" (click)="deletePost()"><mat-icon>delete_outline</mat-icon> Delete</button>
+  } @else {
+    <button mat-menu-item class="logout-item" (click)="blockUser()">
+      <mat-icon>block</mat-icon> Block @{{ author?.userName }}
+    </button>
+  }
+</mat-menu>
+}

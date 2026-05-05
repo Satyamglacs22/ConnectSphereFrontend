@@ -1,0 +1,250 @@
+@if (loading()) {
+  <div class="center-spin"><mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner></div>
+} @else if (post()) {
+<div class="post-detail-container">
+
+  <!-- Back button -->
+  <button mat-icon-button routerLink="/home" class="back-btn" aria-label="Back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <!-- ── Post card ──────────────────────────────────────── -->
+  <mat-card class="main-post">
+    <mat-card-header>
+      <div mat-card-avatar class="avatar" [routerLink]="['/profile', post()!.userId]">
+        @if (author()?.avatarUrl) {
+          <img [src]="author()!.avatarUrl" class="avatar-img" alt="avatar" />
+        } @else {
+          {{ author()?.fullName?.charAt(0) || 'U' }}
+        }
+      </div>
+      <mat-card-title [routerLink]="['/profile', post()!.userId]">{{ author()?.fullName || 'User ' + post()!.userId }}</mat-card-title>
+      <mat-card-subtitle>
+        &#64;{{ author()?.userName || post()!.userId }} &bull;
+        {{ timeAgo(post()!.createdAt) }} &bull;
+        <span class="vis">{{ post()!.visibility }}</span>
+        @if (post()!.updatedAt) { <span class="edited-tag">· edited</span> }
+      </mat-card-subtitle>
+
+      @if (!isEditing()) {
+        <button mat-icon-button class="post-menu-btn" [matMenuTriggerFor]="detailMenu" aria-label="Options">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #detailMenu="matMenu">
+          @if (isOwnPost) {
+            <button mat-menu-item (click)="startEdit()">
+              <mat-icon>edit</mat-icon> Edit Post
+            </button>
+            <button mat-menu-item (click)="deletePost()" style="color: #f44336;">
+              <mat-icon style="color: #f44336;">delete</mat-icon> Delete Post
+            </button>
+          } @else {
+            <button mat-menu-item (click)="blockUser()" style="color: #f44336;">
+              <mat-icon style="color: #f44336;">block</mat-icon> Block User
+            </button>
+          }
+        </mat-menu>
+      }
+    </mat-card-header>
+
+    <!-- Edit form -->
+    @if (isEditing()) {
+      <mat-card-content class="edit-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Content</mat-label>
+          <textarea matInput [(ngModel)]="editContent" rows="5"></textarea>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Hashtags (comma separated)</mat-label>
+          <input matInput [(ngModel)]="editHashtags" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Visibility</mat-label>
+          <select matNativeControl [(ngModel)]="editVisibility">
+            <option value="PUBLIC">Public</option>
+            <option value="FOLLOWERS">Followers Only</option>
+            <option value="PRIVATE">Private</option>
+          </select>
+        </mat-form-field>
+        <div class="edit-actions">
+          <button mat-stroked-button (click)="cancelEdit()">Cancel</button>
+          <button mat-raised-button color="primary" (click)="saveEdit()" [disabled]="saving()">
+            @if (saving()) { <mat-progress-spinner diameter="18" mode="indeterminate"></mat-progress-spinner> }
+            @else { Save Changes }
+          </button>
+        </div>
+      </mat-card-content>
+    } @else {
+      <mat-card-content>
+        <p class="post-body">{{ post()!.content }}</p>
+
+        @if (getMediaList().length > 0) {
+          <div class="carousel-container">
+            <div class="carousel-track" [style.transform]="'translateX(-' + (currentMediaIndex() * 100) + '%)'">
+              @for (url of getMediaList(); track url) {
+                <div class="carousel-item">
+                  <img [src]="url" class="post-img" alt="Post media" />
+                </div>
+              }
+            </div>
+            @if (getMediaList().length > 1) {
+              <button mat-icon-button class="nav-btn prev" (click)="prevMedia()"><mat-icon>chevron_left</mat-icon></button>
+              <button mat-icon-button class="nav-btn next" (click)="nextMedia()"><mat-icon>chevron_right</mat-icon></button>
+            }
+          </div>
+        }
+
+        @if (getHashtags().length > 0) {
+          <div class="hashtags">
+            @for (tag of getHashtags(); track tag) {
+              <span class="htag clickable" (click)="searchHashtag(tag)">#{{ tag }}</span>
+            }
+          </div>
+        }
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-icon-button [class.liked]="hasLiked()" (click)="toggleLike()">
+          <mat-icon>{{ hasLiked() ? 'favorite' : 'favorite_border' }}</mat-icon>
+        </button>
+        <span class="cnt clickable" (click)="openLikersDialog()" matTooltip="See who liked">{{ likeCount() }} Likes</span>
+        <mat-icon class="cnt-icon">chat_bubble_outline</mat-icon>
+        <span class="cnt">{{ comments().length }} Comments</span>
+
+      </mat-card-actions>
+    }
+  </mat-card>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <!-- ── Comments section ──────────────────────────────── -->
+  <div class="comments-section">
+    <h2>Comments</h2>
+
+    <!-- Add comment -->
+    <div class="add-comment-row">
+      <div class="comment-avatar">Me</div>
+      <mat-form-field appearance="outline" class="comment-field">
+        <mat-label>Write a comment…</mat-label>
+        <input matInput [(ngModel)]="newComment" (keyup.enter)="addComment()" />
+        <button mat-icon-button matSuffix (click)="addComment()">
+          <mat-icon>send</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <!-- Comments list -->
+    @for (comment of comments(); track comment.commentId) {
+      <div class="comment-item">
+        <div class="comment-avatar" [routerLink]="['/profile', comment.userId]">
+          @if (comment.authorAvatarUrl) {
+            <img [src]="comment.authorAvatarUrl" alt="Avatar" />
+          } @else {
+            {{ comment.authorName?.charAt(0) || 'U' }}
+          }
+        </div>
+        <div class="comment-body">
+
+          @if (editingCommentId() !== comment.commentId) {
+            <div class="comment-header">
+              <span class="comment-author" [routerLink]="['/profile', comment.userId]">{{ comment.authorName }}</span>
+              <span class="comment-time">{{ timeAgo(comment.createdAt) }}</span>
+              @if (comment.isEdited) { <span class="edited-tag">edited</span> }
+            </div>
+            <p>{{ comment.content }}</p>
+
+            <!-- Comment action bar -->
+            <div class="comment-actions">
+              <button mat-icon-button class="sm-btn"
+                [class.liked]="commentLikes()[comment.commentId]?.hasLiked"
+                (click)="toggleCommentLike(comment.commentId)"
+                matTooltip="Like">
+                <mat-icon class="sm-icon">{{ commentLikes()[comment.commentId]?.hasLiked ? 'favorite' : 'favorite_border' }}</mat-icon>
+              </button>
+              <span class="sm-count">{{ commentLikes()[comment.commentId]?.likeCount || 0 }}</span>
+
+              <button mat-button class="reply-btn" (click)="startReply(comment.commentId)">
+                <mat-icon class="sm-icon">reply</mat-icon> Reply
+              </button>
+
+              @if (comment.replyCount > 0 && !replies()[comment.commentId]?.length) {
+                <button mat-button class="reply-btn" (click)="loadReplies(comment.commentId)">
+                  View {{ comment.replyCount }} {{ comment.replyCount === 1 ? 'reply' : 'replies' }}
+                </button>
+              }
+
+              @if (isOwnComment(comment)) {
+                <button mat-icon-button class="sm-btn" (click)="startEditComment(comment)" matTooltip="Edit">
+                  <mat-icon class="sm-icon">edit</mat-icon>
+                </button>
+                <button mat-icon-button class="sm-btn warn-btn" (click)="deleteComment(comment.commentId)" matTooltip="Delete">
+                  <mat-icon class="sm-icon">delete</mat-icon>
+                </button>
+              }
+            </div>
+
+          } @else {
+            <div class="comment-edit-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput [(ngModel)]="editingCommentContent" (keyup.enter)="saveEditComment(comment.commentId)" />
+              </mat-form-field>
+              <button mat-icon-button color="primary" (click)="saveEditComment(comment.commentId)">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button mat-icon-button (click)="cancelEditComment()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
+
+          <!-- Replies -->
+          @if (loadingReplies()[comment.commentId]) {
+            <mat-progress-spinner diameter="20" mode="indeterminate"></mat-progress-spinner>
+          }
+          @if (replies()[comment.commentId]?.length) {
+            <div class="replies-list">
+              @for (reply of replies()[comment.commentId]; track reply.commentId) {
+                <div class="reply">
+                  <div class="reply-avatar" [routerLink]="['/profile', reply.userId]">
+                    @if (reply.authorAvatarUrl) {
+                      <img [src]="reply.authorAvatarUrl" alt="Avatar" />
+                    } @else {
+                      {{ reply.authorName?.charAt(0) || 'U' }}
+                    }
+                  </div>
+                  <div class="reply-body">
+                    <span class="comment-author" [routerLink]="['/profile', reply.userId]">{{ reply.authorName }}</span>
+                    <span class="comment-time">{{ timeAgo(reply.createdAt) }}</span>
+                    <p>{{ reply.content }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+
+          @if (replyingToCommentId() === comment.commentId) {
+            <div class="reply-input-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Write a reply…</mat-label>
+                <input matInput [(ngModel)]="replyContent" (keyup.enter)="submitReply(comment.commentId)" />
+                <button mat-icon-button matSuffix (click)="submitReply(comment.commentId)">
+                  <mat-icon>send</mat-icon>
+                </button>
+              </mat-form-field>
+              <button mat-button (click)="cancelReply()">Cancel</button>
+            </div>
+          }
+
+        </div>
+      </div>
+    }
+
+    @if (comments().length === 0) {
+      <div class="no-comments">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <p>No comments yet. Start the conversation!</p>
+      </div>
+    }
+  </div>
+</div>
+}

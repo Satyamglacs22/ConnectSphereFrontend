@@ -1,0 +1,47 @@
+<div class="feed-container">
+  <h1>Your Feed</h1>
+
+  <!-- Unseen posts banner -->
+  @if (showUnseenBanner()) {
+    <div class="unseen-banner" (click)="refreshFeed()">
+      <mat-icon>refresh</mat-icon>
+      <span>{{ unseenCount() }} new {{ unseenCount() === 1 ? 'post' : 'posts' }} — click to refresh</span>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="center-spin">
+      <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+    </div>
+  }
+
+  <!-- Feed posts using PostCard -->
+  @for (post of posts(); track post.postId) {
+    <app-post-card [post]="post" [author]="userMap()[post.userId]"></app-post-card>
+  }
+
+  @if (!loading() && posts().length === 0) {
+    <div class="empty-state">
+      <mat-icon>people_outline</mat-icon>
+      <h3>Your feed is empty</h3>
+      <p>Follow some users to see their posts here.</p>
+    </div>
+  }
+
+  <!-- Load More -->
+  @if (!loading() && posts().length > 0 && hasMore()) {
+    <div class="load-more-row">
+      @if (loadingMore()) {
+        <mat-progress-spinner mode="indeterminate" diameter="32"></mat-progress-spinner>
+      } @else {
+        <button mat-stroked-button (click)="loadMore()">
+          <mat-icon>expand_more</mat-icon> Load More
+        </button>
+      }
+    </div>
+  }
+
+  @if (!loading() && !hasMore() && posts().length > 0) {
+    <p class="end-msg">You've seen all posts ✓</p>
+  }
+</div>

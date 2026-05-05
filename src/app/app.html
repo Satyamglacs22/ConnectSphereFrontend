@@ -1,0 +1,85 @@
+@if (loggedIn()) {
+  <mat-toolbar class="prism-nav">
+    <div class="nav-content">
+      <div class="nav-left">
+        <span class="logo animate-float" routerLink="/home">
+          <mat-icon class="logo-symbol">polymer</mat-icon>
+          <span class="text-gradient">ConnectSphere</span>
+        </span>
+      </div>
+
+      <div class="nav-center">
+        <div class="search-command" routerLink="/search">
+          <mat-icon>search</mat-icon>
+          <span>Search anything...</span>
+          <span class="kb-hint">⌘K</span>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <nav class="icon-nav">
+          <button mat-icon-button routerLink="/home" matTooltip="Home" routerLinkActive="active-link">
+            <mat-icon>dashboard</mat-icon>
+          </button>
+          <button mat-icon-button routerLink="/explore" matTooltip="Explore" routerLinkActive="active-link">
+            <mat-icon>explore</mat-icon>
+          </button>
+          <button mat-icon-button routerLink="/notifications" matTooltip="Notifications" routerLinkActive="active-link">
+            <mat-icon [matBadge]="unreadCount()" matBadgeColor="warn" [matBadgeHidden]="unreadCount() === 0">
+              notifications
+            </mat-icon>
+          </button>
+        </nav>
+
+        <div class="nav-divider"></div>
+
+        <button mat-raised-button color="primary" class="create-trigger" (click)="openCreatePost()">
+          <mat-icon>add</mat-icon>
+          <span>Create</span>
+        </button>
+
+        <button mat-icon-button [matMenuTriggerFor]="profileMenu" class="user-trigger">
+          <div class="avatar-glow">
+            @if (currentUser()?.avatarUrl) {
+              <img [src]="currentUser()!.avatarUrl" alt="Avatar" />
+            } @else {
+              <mat-icon>account_circle</mat-icon>
+            }
+          </div>
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <mat-menu #profileMenu="matMenu" xPosition="before" class="prism-menu">
+    <div class="menu-header">
+      <div class="menu-user-info">
+        <div class="name">{{ currentUser()?.fullName }}</div>
+        <div class="handle">@{{ currentUser()?.userName }}</div>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <button mat-menu-item [routerLink]="['/profile', currentUser()?.userId]">
+      <mat-icon>person_outline</mat-icon> <span>My Profile</span>
+    </button>
+    <button mat-menu-item routerLink="/settings">
+      <mat-icon>settings_outline</mat-icon> <span>Settings</span>
+    </button>
+    <button mat-menu-item routerLink="/bookmarks">
+      <mat-icon>bookmark_outline</mat-icon> <span>Bookmarks</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item (click)="logout()" class="logout-item">
+      <mat-icon>logout</mat-icon> <span>Sign Out</span>
+    </button>
+  </mat-menu>
+}
+
+<div class="main-wrapper">
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  
+  <div class="content-viewport">
+    <router-outlet></router-outlet>
+  </div>
+</div>

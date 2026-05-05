@@ -1,0 +1,51 @@
+<mat-card class="suggestions-card">
+  <mat-card-content>
+    @if (loading()) {
+      <div class="skeleton-list">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="suggestion-item" style="opacity: 0.3;">
+            <div class="user-avatar" style="background: #333;"></div>
+            <div class="user-info">
+              <div style="height: 10px; width: 60%; background: #333; margin-bottom: 6px;"></div>
+              <div style="height: 8px; width: 40%; background: #333;"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      @for (suggestion of suggestedUsers(); track suggestion.userId) {
+        <div class="suggestion-item">
+          <div class="user-avatar" [routerLink]="['/profile', suggestion.userId]">
+            <div class="avatar-inner">
+              @if (suggestion.avatarUrl) {
+                <img [src]="suggestion.avatarUrl" alt="avatar" />
+              } @else {
+                <span>{{ suggestion.fullName[0] }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="user-info" [routerLink]="['/profile', suggestion.userId]">
+            <div class="name">{{ suggestion.userName }}</div>
+            <div class="handle">
+               <span>{{ suggestion.fullName }}</span>
+               @if (suggestion.mutualCount > 0) {
+                 &bull; <span class="mutual-text">{{ suggestion.mutualCount }} mutual</span>
+               }
+            </div>
+          </div>
+
+          <button mat-button class="follow-btn" (click)="follow(suggestion)">Follow</button>
+        </div>
+      }
+
+      @if (suggestedUsers().length === 0) {
+        <div style="color: var(--prism-text-muted); font-size: 14px; text-align: center; padding: 20px;">
+          No suggestions available.
+        </div>
+      }
+
+      <button mat-button class="view-all" routerLink="/search" style="width: 100%; margin-top: 12px; font-weight: 700;">Discover More</button>
+    }
+  </mat-card-content>
+</mat-card>

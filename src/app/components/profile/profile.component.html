@@ -1,0 +1,101 @@
+<div class="profile-container" *ngIf="profileUser()">
+  
+  <header class="profile-header">
+    <div class="avatar-section">
+      <div class="avatar-ring animate-float">
+        <div class="avatar-content">
+          @if (profileUser()!.avatarUrl) {
+            <img [src]="profileUser()!.avatarUrl" />
+          } @else {
+            <mat-icon>person</mat-icon>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="user-info-section">
+      <h1 class="display-name">{{ profileUser()!.fullName }}</h1>
+      <div class="username-handle">&#64;{{ profileUser()!.userName }}</div>
+
+      <div class="stats-row">
+        <div class="stat"><strong>{{ profileUser()!.postCount }}</strong> posts</div>
+        <div class="stat clickable" (click)="openFollowers()"><strong>{{ profileUser()!.followerCount }}</strong> followers</div>
+        <div class="stat clickable" (click)="openFollowing()"><strong>{{ profileUser()!.followingCount }}</strong> following</div>
+      </div>
+
+      <div class="bio-box">
+        <div class="bio-text">{{ profileUser()!.bio }}</div>
+        
+        @if (!isOwnProfile && mutualFollowers() && mutualFollowers()!.mutualCount > 0) {
+          <div class="mutual-summary">
+            <div class="m-avatars">
+              @for (u of mutualUsers(); track u.userId) {
+                <div class="m-avatar">
+                  @if (u.avatarUrl) { <img [src]="u.avatarUrl" /> } @else { {{ u.fullName[0] }} }
+                </div>
+              }
+            </div>
+            <span>Followed by <strong>{{ mutualUsers()[0]?.userName }}</strong> 
+              @if (mutualFollowers()!.mutualCount > 1) { and {{ mutualFollowers()!.mutualCount - 1 }} others }
+            </span>
+          </div>
+        }
+      </div>
+
+      <div class="action-btns-row">
+        @if (isOwnProfile) {
+          <button mat-flat-button class="prism-btn secondary" routerLink="/settings">Edit profile</button>
+          <button mat-flat-button class="prism-btn secondary" (click)="openDiscoverPeople()">Discover people</button>
+          <button mat-icon-button routerLink="/settings" class="settings-btn"><mat-icon>settings</mat-icon></button>
+        } @else {
+          <button mat-flat-button class="prism-btn" 
+                  [class.primary]="followStatus() === 'NONE'"
+                  [class.secondary]="followStatus() !== 'NONE'"
+                  (click)="toggleFollow()">
+            {{ followStatus() === 'ACCEPTED' ? 'Following' : followStatus() === 'PENDING' ? 'Requested' : 'Follow' }}
+          </button>
+          <button mat-flat-button class="prism-btn secondary" (click)="openDiscoverPeople()">Discover people</button>
+          <button mat-flat-button class="prism-btn secondary" 
+                  [class.warn]="isBlocked()"
+                  (click)="toggleBlock()">
+            {{ isBlocked() ? 'Unblock' : 'Block' }}
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <nav class="content-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'posts'" (click)="switchTab('posts')">
+      <mat-icon>grid_on</mat-icon> Posts
+    </button>
+    @if (isOwnProfile) {
+      <button class="tab-btn" [class.active]="activeTab() === 'liked'" (click)="switchTab('liked')">
+        <mat-icon>favorite_border</mat-icon> Liked
+      </button>
+    }
+  </nav>
+
+  <div class="media-grid" *ngIf="!isBlocked() && (activeTab() === 'posts' ? posts().length > 0 : likedPosts().length > 0)">
+    @for (post of (activeTab() === 'posts' ? posts() : likedPosts()); track post.postId) {
+      <mat-card class="media-card" [routerLink]="['/post', post.postId]">
+        @if (post.mediaUrl) {
+          <img [src]="post.mediaUrl" />
+        }
+        
+        <div class="media-overlay">
+          <div class="overlay-item"><mat-icon>favorite</mat-icon> {{ post.likeCount }}</div>
+          <div class="overlay-item"><mat-icon>chat_bubble</mat-icon> {{ post.commentCount }}</div>
+        </div>
+      </mat-card>
+    }
+  </div>
+
+  <div class="empty-state" *ngIf="!isBlocked() && (activeTab() === 'posts' ? posts().length === 0 : likedPosts().length === 0)" 
+       style="text-align: center; padding: 100px 0; color: var(--prism-text-muted);">
+    <mat-icon style="font-size: 60px; width: 60px; height: 60px; margin-bottom: 20px;">dashboard_customize</mat-icon>
+    <h3>Nothing to show yet</h3>
+  </div>
+
+</div>
+

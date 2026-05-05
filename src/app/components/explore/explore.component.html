@@ -1,0 +1,63 @@
+<div class="explore-container">
+  
+  <header class="explore-header">
+    <h1 class="text-gradient">Discover Stories</h1>
+    
+    <div class="tag-cloud">
+      <div class="tag-chip" [class.active]="!activeTag" (click)="clearTag()">All</div>
+      @for (tag of popularTags; track tag) {
+        <div class="tag-chip" [class.active]="activeTag === tag" (click)="selectTag(tag)">
+          #{{ tag }}
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (loading) {
+    <div style="padding: 100px; text-align: center;">
+      <mat-progress-spinner mode="indeterminate" diameter="40" style="margin: 0 auto;"></mat-progress-spinner>
+      <p style="margin-top: 20px; color: var(--prism-text-muted);">Fetching the latest trends...</p>
+    </div>
+  } @else {
+    
+    @if (activeTag) {
+      <div class="section-title">
+        <h2><mat-icon>tag</mat-icon> Results for #{{ activeTag }}</h2>
+      </div>
+      <div class="explore-grid">
+        @for (post of tagPosts; track post.postId) {
+          <div class="explore-item" [routerLink]="['/post', post.postId]">
+            <img [src]="post.mediaUrl" *ngIf="post.mediaUrl" />
+            <div class="overlay">
+              <div class="stat-item"><mat-icon>favorite</mat-icon> {{ post.likeCount }}</div>
+              <div class="stat-item"><mat-icon>chat_bubble</mat-icon> {{ post.commentCount }}</div>
+            </div>
+          </div>
+        }
+      </div>
+      @if (tagPosts.length === 0) {
+        <div style="text-align: center; padding: 60px; color: var(--prism-text-muted);">
+          <mat-icon style="font-size: 40px; width: 40px; height: 40px;">search_off</mat-icon>
+          <p>No posts found for this hashtag.</p>
+        </div>
+      }
+    } @else {
+      <div class="section-title">
+        <h2><mat-icon>trending_up</mat-icon> Trending Now</h2>
+      </div>
+      <div class="explore-grid">
+        @for (post of trending; track post.postId) {
+          <div class="explore-item" [routerLink]="['/post', post.postId]">
+            <img [src]="post.mediaUrl" *ngIf="post.mediaUrl" />
+            <div class="overlay">
+              <div class="stat-item"><mat-icon>favorite</mat-icon> {{ post.likeCount }}</div>
+              <div class="stat-item"><mat-icon>chat_bubble</mat-icon> {{ post.commentCount }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  }
+
+</div>

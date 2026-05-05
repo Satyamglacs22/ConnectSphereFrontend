@@ -1,0 +1,238 @@
+@use '@angular/material' as mat;
+
+// ── ConnectSphere "CRYSTAL" Design System (Light Premium) ────────────────
+:root {
+  --prism-bg: #fdfdff; 
+  --prism-surface: rgba(255, 255, 255, 0.7);
+  --prism-surface-hover: rgba(255, 255, 255, 0.9);
+  --prism-border: rgba(99, 102, 241, 0.1);
+  --prism-border-light: rgba(99, 102, 241, 0.2);
+  
+  --prism-primary: #6366f1;
+  --prism-primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  --prism-accent-gradient: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+  
+  --prism-text: #0f172a;
+  --prism-text-muted: #334155;
+  --prism-text-faint: #475569;
+  
+  --prism-blur: blur(20px);
+  --prism-shadow: 0 20px 50px -12px rgba(99, 102, 241, 0.12);
+  --prism-glow: 0 0 30px rgba(99, 102, 241, 0.15);
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--prism-bg);
+  // Soft, airy background decorations for Light Theme
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.04) 0%, transparent 40%);
+  background-attachment: fixed;
+  color: var(--prism-text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+// ── Global base ───────────────────────────────────────────────────────────
+* { box-sizing: border-box; }
+
+// ── Scrollbar ─────────────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+  background: rgba(99, 102, 241, 0.15); 
+  border-radius: 10px;
+  border: 2px solid var(--prism-bg);
+  background-clip: padding-box;
+  &:hover { background: rgba(99, 102, 241, 0.3); }
+}
+
+// ── Material Overrides (CRYSTAL Style) ────────────────────────────────
+mat-card, .mat-mdc-card {
+  background: var(--prism-surface) !important;
+  backdrop-filter: var(--prism-blur) !important;
+  -webkit-backdrop-filter: var(--prism-blur) !important;
+  border: 1px solid var(--prism-border) !important;
+  border-radius: 32px !important;
+  box-shadow: var(--prism-shadow) !important;
+  color: var(--prism-text) !important;
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+  overflow: hidden;
+
+  &:hover {
+    border-color: var(--prism-border-light) !important;
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px -12px rgba(99, 102, 241, 0.2) !important;
+    background: var(--prism-surface-hover) !important;
+  }
+}
+
+// ── Navigation Bar ──────────────────────────────────────
+mat-toolbar, .mat-toolbar {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid var(--prism-border) !important;
+  color: var(--prism-text) !important;
+  height: 80px !important;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0 40px !important;
+
+  .logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -0.8px;
+    background: var(--prism-primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────
+.mat-mdc-button, .mat-mdc-raised-button {
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+  padding: 0 24px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background: var(--prism-primary-gradient) !important;
+  color: white !important;
+  box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.3) !important;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(99, 102, 241, 0.5) !important;
+    filter: brightness(1.05);
+  }
+}
+
+.mat-mdc-button.mat-primary {
+  color: var(--prism-primary) !important;
+  &:hover { background: rgba(99, 102, 241, 0.05) !important; }
+}
+
+// ── Form fields ──────────────────────────────────────────────────────────
+.mat-mdc-form-field {
+  width: 100%;
+  margin-top: 16px !important; // Space for the label above
+  margin-bottom: 24px;
+
+  .mdc-text-field--outlined, .mdc-text-field--filled {
+    --mdc-outlined-text-field-container-shape: 24px;
+    --mdc-outlined-text-field-outline-color: rgba(99, 102, 241, 0.08);
+    --mdc-outlined-text-field-focus-outline-color: transparent;
+    --mdc-outlined-text-field-hover-outline-color: rgba(99, 102, 241, 0.2);
+    
+    background: rgba(248, 250, 252, 0.6) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(99, 102, 241, 0.05) !important;
+    border-radius: 24px !important;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    height: 68px !important;
+    padding-top: 12px !important; // Push input down
+    
+    &:hover { 
+      background: rgba(241, 245, 249, 0.8) !important; 
+      border-color: rgba(99, 102, 241, 0.2) !important;
+      transform: translateY(-1px);
+    }
+
+    &.mdc-text-field--focused { 
+      background: white !important; 
+      border-color: var(--prism-primary) !important;
+      box-shadow: 0 15px 35px -10px rgba(99, 102, 241, 0.2);
+      transform: translateY(-2px);
+      
+      &::before {
+        content: ''; position: absolute; inset: -2px; border-radius: 26px;
+        background: var(--prism-primary-gradient); padding: 2px;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor; mask-composite: exclude;
+        pointer-events: none; opacity: 0.5;
+      }
+    }
+  }
+
+  .mdc-line-ripple { display: none; }
+  .mdc-notched-outline__trailing, .mdc-notched-outline__leading, .mdc-notched-outline__notch { border: none !important; }
+  
+  .mat-mdc-form-field-flex {
+    align-items: center !important;
+    padding: 0 24px !important;
+  }
+
+  input, textarea {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+    font-size: 17px !important;
+    margin-top: 4px !important; // Extra gap from label
+    caret-color: var(--prism-primary);
+    &::placeholder { color: var(--prism-text-faint) !important; font-weight: 500; }
+  }
+
+  mat-icon[matPrefix] {
+    color: var(--prism-primary); opacity: 0.6; margin-right: 16px; transition: all 0.3s;
+    font-size: 24px; width: 24px; height: 24px;
+    margin-top: 4px !important;
+  }
+  &.mat-focused mat-icon[matPrefix] { opacity: 1; transform: scale(1.1); }
+
+  .mat-mdc-floating-label {
+    color: var(--prism-text-muted) !important;
+    font-weight: 800 !important;
+    font-size: 14px !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    top: 28px !important; // Center label vertically when not floating
+    
+    &.mdc-floating-label--float-above { 
+      color: var(--prism-primary) !important; 
+      transform: translateY(-46px) scale(0.9) !important; // Moved even higher
+      background: transparent !important; // Remove bg to let it float clean
+      padding: 0;
+    }
+  }
+
+  .mat-mdc-form-field-subscript-wrapper { display: none; }
+}
+
+// ── Typography ───────────────────────────────────────────────────────────
+h1, h2, h3 { font-weight: 800; letter-spacing: -1px; margin: 0; color: var(--prism-text); }
+.text-gradient {
+  background: var(--prism-primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-accent {
+  background: var(--prism-accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// ── Glass Dialog ────────────────────────────────────────────────────────
+.cdk-overlay-backdrop { background: rgba(15, 23, 42, 0.2) !important; backdrop-filter: blur(12px) !important; }
+
+.glass-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(40px) !important;
+  border: 1px solid var(--prism-border) !important;
+  border-radius: 36px !important;
+  box-shadow: 0 40px 100px rgba(99, 102, 241, 0.15) !important;
+}
+
+.glass-dialog {
+  .mat-mdc-dialog-title { color: var(--prism-text) !important; font-weight: 800 !important; font-family: 'Plus Jakarta Sans' !important; }
+  .mat-mdc-dialog-content { color: var(--prism-text-muted) !important; }
+  .mat-mdc-dialog-actions { border-top: 1px solid var(--prism-border); padding: 20px 24px !important; }
+}

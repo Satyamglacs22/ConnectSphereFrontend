@@ -1,0 +1,76 @@
+<div class="home-container">
+  
+  <div class="feed-section">
+    <header class="feed-header">
+      <div class="greeting">
+        <span>Hey,</span>
+        <span class="text-gradient">{{ firstName }}</span>
+        <span>✨</span>
+      </div>
+      <div class="sub">Here's what's happening in your sphere today.</div>
+    </header>
+
+    <div class="feed-controls">
+      <div class="feed-tabs">
+        <button class="tab-btn" [class.active]="activeTab === 'public'" (click)="setTab('public')">Feed</button>
+        <button class="tab-btn" [class.active]="activeTab === 'trending'" (click)="setTab('trending')">Trending</button>
+      </div>
+    </div>
+
+    @if (loading) {
+      <div class="loading-state">
+        <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+        <p>Polishing your feed...</p>
+      </div>
+    } @else {
+      @for (post of (activeTab === 'public' ? posts : trendingPosts); track post.postId) {
+        <app-post-card [post]="post" [author]="userMap[post.userId]"></app-post-card>
+      }
+
+      @if ((activeTab === 'public' ? posts : trendingPosts).length === 0) {
+        <mat-card class="empty-feed">
+          <mat-icon>auto_awesome</mat-icon>
+          <h3>Your sphere is quiet</h3>
+          <p>Follow some creators to fill your feed with inspiration.</p>
+        </mat-card>
+      }
+    }
+  </div>
+
+  <div class="sidebar-section">
+    <!-- Quick Profile -->
+    @if (currentUser) {
+      <mat-card class="profile-summary-card">
+        <div class="p-bg"></div>
+        <div class="p-avatar">
+          @if (currentUser.avatarUrl) {
+            <img [src]="currentUser.avatarUrl" />
+          } @else {
+            <div class="no-img">{{ currentUser.fullName[0] }}</div>
+          }
+        </div>
+        <div class="p-info">
+          <h3 class="p-name">{{ currentUser.fullName }}</h3>
+          <div class="p-handle">@{{ currentUser.userName }}</div>
+        </div>
+        <div class="p-stats">
+          <div class="stat">
+            <span class="val">{{ currentUser.followerCount }}</span>
+            <span class="lbl">Followers</span>
+          </div>
+          <div class="stat">
+            <span class="val">{{ currentUser.postCount }}</span>
+            <span class="lbl">Posts</span>
+          </div>
+        </div>
+      </mat-card>
+    }
+
+    <!-- Suggestions -->
+    <div class="suggestions-wrap">
+      <h3>Recommended for you</h3>
+      <app-suggestions></app-suggestions>
+    </div>
+  </div>
+
+</div>

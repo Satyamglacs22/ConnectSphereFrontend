@@ -1,0 +1,26 @@
+<div class="bookmarks-container">
+  <header class="page-header">
+    <h1><mat-icon>bookmark</mat-icon> Saved Posts</h1>
+    <p>Only you can see what you've saved</p>
+  </header>
+
+  @if (loading()) {
+    <div class="center-spin">
+      <mat-progress-spinner mode="indeterminate" diameter="48"></mat-progress-spinner>
+    </div>
+  } @else {
+    <div class="post-list">
+      @for (post of posts(); track post.postId) {
+        <app-post-card [post]="post"></app-post-card>
+      }
+
+      @if (posts().length === 0) {
+        <div class="empty-state">
+          <mat-icon>bookmark_border</mat-icon>
+          <h2>No saved posts</h2>
+          <p>Posts you save will appear here for easy access.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

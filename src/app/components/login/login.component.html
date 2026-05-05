@@ -1,0 +1,38 @@
+<div class="login-container">
+  <div class="bg-decoration">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+  </div>
+
+  <mat-card class="login-card">
+    <div class="logo-area">
+      <mat-icon class="logo-symbol animate-float">polymer</mat-icon>
+      <h1 class="text-gradient">ConnectSphere</h1>
+      <p>Step into your digital universe</p>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput [(ngModel)]="loginData.email" placeholder="your@email.com" />
+        <mat-icon matSuffix>mail_outline</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" />
+        <button mat-icon-button matSuffix (click)="showPassword = !showPassword">
+          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <button mat-raised-button color="primary" class="submit-btn" [disabled]="loading" (click)="login()">
+      {{ loading ? 'Authenticating...' : 'Sign In' }}
+    </button>
+
+    <div class="auth-footer">
+      New here? <a routerLink="/register">Create an account</a>
+    </div>
+  </mat-card>
+</div>

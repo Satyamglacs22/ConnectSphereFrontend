@@ -1,0 +1,100 @@
+<div class="notifications-container">
+  
+  <div class="notif-header">
+    <h1 class="text-gradient">Notifications</h1>
+    
+    <div class="header-actions">
+      @if (unreadCount() > 0) {
+        <button mat-button class="prism-action-btn" (click)="markAllRead()">
+          <mat-icon>done_all</mat-icon>
+          <span>Mark all read</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (showBroadcastForm()) {
+    <mat-card class="broadcast-card">
+      <h3><mat-icon>campaign</mat-icon> Create Announcement</h3>
+      <div class="form-grid">
+        <input [(ngModel)]="broadcastTitle" placeholder="Title" class="prism-input" />
+        <textarea [(ngModel)]="broadcastMessage" placeholder="What's the news?" class="prism-input" rows="3"></textarea>
+      </div>
+      <div class="form-actions">
+        <button mat-button (click)="showBroadcastForm.set(false)">Cancel</button>
+        <button mat-raised-button color="primary" [disabled]="!broadcastTitle.trim() || sendingBroadcast()" (click)="sendAnnouncement()">
+          {{ sendingBroadcast() ? 'Sending...' : 'Broadcast' }}
+        </button>
+      </div>
+    </mat-card>
+  } @else {
+    <div style="margin-bottom: 24px; display: flex; justify-content: flex-end;">
+      <button mat-button class="prism-action-btn" (click)="showBroadcastForm.set(true)">
+        <mat-icon>add_alert</mat-icon>
+        <span>New Broadcast</span>
+      </button>
+    </div>
+  }
+
+  <div class="filter-tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'all'" (click)="setTab('all')">All</button>
+    <button class="tab-btn" [class.active]="activeTab() === 'unread'" (click)="setTab('unread')">
+      Unread
+      <span class="count-badge" *ngIf="unreadCount() > 0">{{ unreadCount() }}</span>
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state" style="padding: 60px; text-align: center;">
+      <mat-progress-spinner mode="indeterminate" diameter="40" style="margin: 0 auto;"></mat-progress-spinner>
+      <p style="margin-top: 16px; color: var(--prism-text-muted);">Syncing your alerts...</p>
+    </div>
+  } @else {
+    <div class="notif-list">
+      @for (n of notifications(); track n.notificationId) {
+        <div class="notif-item" [class.unread]="!n.isRead" (click)="markRead(n)">
+          <div class="notif-avatar">
+            <div class="avatar-inner">
+              @if (n.actorAvatarUrl) {
+                <img [src]="n.actorAvatarUrl" />
+              } @else {
+                <mat-icon>{{ iconForType(n.type) }}</mat-icon>
+              }
+            </div>
+          </div>
+          
+          <div class="notif-content">
+            <div class="notif-msg">
+              <strong>{{ n.actorName || 'System' }}</strong> {{ n.message }}
+            </div>
+            <div class="notif-time">{{ n.createdAt | timeAgo }}</div>
+
+            @if (n.type === 'FOLLOW_REQUEST' && !n.isRead) {
+              <div class="notif-actions" (click)="$event.stopPropagation()">
+                <button mat-raised-button color="primary" (click)="acceptFollowRequest($event, n)">Confirm</button>
+                <button mat-button (click)="rejectFollowRequest($event, n)">Delete</button>
+              </div>
+            }
+          </div>
+
+          @if (!n.isRead) {
+            <div class="unread-glow"></div>
+          }
+
+          <button mat-icon-button class="delete-btn" (click)="deleteNotif($event, n.notificationId)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      @if (notifications().length === 0) {
+        <div class="empty-state" style="text-align: center; padding: 100px 0;">
+          <mat-icon style="font-size: 60px; width: 60px; height: 60px; color: var(--prism-border); margin-bottom: 20px;">notifications_off</mat-icon>
+          <h3 style="color: white;">All caught up!</h3>
+          <p style="color: var(--prism-text-muted);">No new notifications to show.</p>
+        </div>
+      }
+    </div>
+  }
+
+</div>

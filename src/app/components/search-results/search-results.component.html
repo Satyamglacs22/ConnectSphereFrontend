@@ -1,0 +1,58 @@
+<div class="search-container">
+  <header class="search-header">
+    <h1>Search Results for "{{ query() }}"</h1>
+    <p>{{ users().length }} users and {{ posts().length }} posts found</p>
+  </header>
+
+  <div class="search-tabs">
+    <button [class.active]="activeTab() === 'users'" (click)="switchTab('users')">
+      <mat-icon>people</mat-icon> Users ({{ users().length }})
+    </button>
+    <button [class.active]="activeTab() === 'posts'" (click)="switchTab('posts')">
+      <mat-icon>article</mat-icon> Posts ({{ posts().length }})
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    </div>
+  } @else {
+    <div class="results-wrap">
+      @if (activeTab() === 'users') {
+        <div class="user-grid">
+          @for (user of users(); track user.userId) {
+            <mat-card class="user-card" [routerLink]="['/profile', user.userId]">
+              <div class="user-avatar">{{ user.fullName[0] }}</div>
+              <div class="user-info">
+                <h3>{{ user.fullName }}</h3>
+                <p>&#64;{{ user.userName }}</p>
+              </div>
+              <button mat-icon-button color="primary">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            </mat-card>
+          }
+          @if (users().length === 0) {
+            <div class="empty-results">
+              <mat-icon>person_search</mat-icon>
+              <p>No users found matching your query.</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="post-list">
+          @for (post of posts(); track post.postId) {
+            <app-post-card [post]="post"></app-post-card>
+          }
+          @if (posts().length === 0) {
+            <div class="empty-results">
+              <mat-icon>search_off</mat-icon>
+              <p>No posts found matching your query.</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
