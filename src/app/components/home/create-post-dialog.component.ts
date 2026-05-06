@@ -49,7 +49,7 @@ import { User } from '../../models/user.model';
               @if (mediaUrls.length > 1) {
                 <div class="count-badge">+{{ mediaUrls.length - 1 }} more</div>
               }
-              <button mat-icon-button class="clear-media" (click)="$event.stopPropagation(); mediaUrls = []">
+              <button mat-icon-button class="clear-media" (click)="$event.stopPropagation(); mediaUrls = []; selectedFiles = []">
                 <mat-icon>cancel</mat-icon>
               </button>
             </div>
@@ -192,6 +192,7 @@ export class CreatePostDialogComponent implements OnInit {
   content = '';
   hashtags = '';
   mediaUrls: string[] = [];
+  selectedFiles: File[] = [];
   visibility = 'PUBLIC';
   loading = false;
 
@@ -211,27 +212,17 @@ export class CreatePostDialogComponent implements OnInit {
 
   handleImages(files: File[]): void {
     const imageFiles = files.filter(f => f.type.startsWith('image/'));
-    const remaining = 5 - this.mediaUrls.length;
+    const remaining = 5 - this.selectedFiles.length;
     const toProcess = imageFiles.slice(0, remaining);
 
     toProcess.forEach(file => {
+      this.selectedFiles.push(file);
+      
+      // Still create a preview for UI
       const reader = new FileReader();
       reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX = 1080; 
-          const ratio = Math.min(MAX / img.width, MAX / img.height);
-          canvas.width  = img.width  * ratio;
-          canvas.height = img.height * ratio;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            this.mediaUrls.push(canvas.toDataURL('image/jpeg', 0.85));
-            this.cdr.detectChanges();
-          }
-        };
-        img.src = e.target!.result as string;
+        this.mediaUrls.push(e.target!.result as string);
+        this.cdr.detectChanges();
       };
       reader.readAsDataURL(file);
     });
@@ -242,27 +233,41 @@ export class CreatePostDialogComponent implements OnInit {
     return url.startsWith('data:video/') || url.includes('video') || url.endsWith('.mp4') || url.endsWith('.webm');
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     const userId = this.authService.getCurrentUserId();
     if (!userId || !this.content.trim()) return;
     this.loading = true;
 
-    this.postService.createPost({
-      userId,
-      content: this.content,
-      hashtags: this.hashtags || undefined,
-      mediaUrls: this.mediaUrls.length > 0 ? this.mediaUrls : undefined,
-      mediaType: this.mediaUrls.length > 0 ? (this.isVideo(this.mediaUrls[0]) ? 'VIDEO' : 'IMAGE') : undefined,
-      visibility: this.visibility
-    }).subscribe({
-      next: (post: Post) => {
-        this.snackBar.open('Post published! 🎉', 'Close', { duration: 2500 });
-        this.dialogRef.close(post);
-      },
-      error: () => {
-        this.loading = false;
-        this.snackBar.open('Failed to post. Try again.', 'Close', { duration: 2500 });
-      }
-    });
+    try {
+      // 1. Upload all files to Azure and get real URLs
+      const uploadPromises = this.selectedFiles.map(file => 
+        this.postService.uploadMedia(file).toPromise()
+      );
+      
+      const uploadResults = await Promise.all(uploadPromises);
+      const azureUrls = uploadResults.map(res => res?.url).filter(url => !!url) as string[];
+
+      // 2. Create the post with Azure URLs
+      this.postService.createPost({
+        userId,
+        content: this.content,
+        hashtags: this.hashtags || undefined,
+        mediaUrls: azureUrls.length > 0 ? azureUrls : undefined,
+        mediaType: azureUrls.length > 0 ? (this.isVideo(azureUrls[0]) ? 'VIDEO' : 'IMAGE') : undefined,
+        visibility: this.visibility
+      }).subscribe({
+        next: (post: Post) => {
+          this.snackBar.open('Post published! 🎉', 'Close', { duration: 2500 });
+          this.dialogRef.close(post);
+        },
+        error: () => {
+          this.loading = false;
+          this.snackBar.open('Failed to post. Try again.', 'Close', { duration: 2500 });
+        }
+      });
+    } catch (error) {
+      this.loading = false;
+      this.snackBar.open('Failed to upload media. Try again.', 'Close', { duration: 2500 });
+    }
   }
 }

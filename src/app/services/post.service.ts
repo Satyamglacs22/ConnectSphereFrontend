@@ -13,6 +13,12 @@ export class PostService {
     return this.http.post<Post>(`${this.apiUrl}/api/posts`, dto);
   }
 
+  uploadMedia(file: File): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ url: string }>(`${this.apiUrl}/api/posts/upload`, formData);
+  }
+
   getPostById(id: number): Observable<Post> {
     return this.http.get<Post>(`${this.apiUrl}/api/posts/${id}`);
   }
