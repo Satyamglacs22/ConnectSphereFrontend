@@ -39,9 +39,9 @@
               <textarea matInput [(ngModel)]="editData.bio" name="bio" rows="3" placeholder="Tell the sphere about yourself..."></textarea>
             </mat-form-field>
 
-            <div style="display: flex; justify-content: flex-end;">
-              <button mat-raised-button color="primary" type="submit" [disabled]="loading">
-                <mat-icon *ngIf="!loading">check</mat-icon>
+            <div class="form-actions">
+              <button mat-raised-button color="primary" type="submit" [disabled]="loading" class="save-btn">
+                <mat-icon *ngIf="!loading">check_circle</mat-icon>
                 <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>
                 <span>Save Changes</span>
               </button>

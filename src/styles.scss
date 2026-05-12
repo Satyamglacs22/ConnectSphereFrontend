@@ -140,8 +140,10 @@ mat-toolbar, .mat-toolbar {
     border: 1px solid rgba(99, 102, 241, 0.05) !important;
     border-radius: 24px !important;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    height: 68px !important;
-    padding-top: 12px !important; // Push input down
+    height: auto !important;
+    min-height: 64px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
     
     &:hover { 
       background: rgba(241, 245, 249, 0.8) !important; 
@@ -177,15 +179,16 @@ mat-toolbar, .mat-toolbar {
     color: #0f172a !important;
     font-weight: 800 !important;
     font-size: 17px !important;
-    margin-top: 4px !important; // Extra gap from label
+    margin-top: 0 !important;
     caret-color: var(--prism-primary);
+    line-height: 1.4 !important;
     &::placeholder { color: var(--prism-text-faint) !important; font-weight: 500; }
   }
 
   mat-icon[matPrefix] {
     color: var(--prism-primary); opacity: 0.6; margin-right: 16px; transition: all 0.3s;
     font-size: 24px; width: 24px; height: 24px;
-    margin-top: 4px !important;
+    display: flex; align-items: center; justify-content: center;
   }
   &.mat-focused mat-icon[matPrefix] { opacity: 1; transform: scale(1.1); }
 
