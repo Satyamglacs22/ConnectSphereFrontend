@@ -96,9 +96,9 @@
       @if (showComments) {
         <div class="comments-list" style="margin-top: 12px; display: flex; flex-direction: column; gap: 10px;">
           @for (c of comments(); track c.commentId) {
-            <div class="comment-item" style="font-size: 13px;">
-              <strong style="color: white; margin-right: 6px;">{{ c.authorName }}</strong>
-              <span style="color: #e2e8f0;">{{ c.content }}</span>
+            <div class="comment-item" style="font-size: 14px; line-height: 1.4;">
+              <strong style="color: var(--prism-primary); margin-right: 6px; cursor: pointer;">{{ c.authorName }}</strong>
+              <span style="color: var(--prism-text); font-weight: 500;">{{ c.content }}</span>
             </div>
           }
         </div>
