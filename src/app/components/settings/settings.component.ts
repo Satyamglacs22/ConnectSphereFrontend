@@ -99,7 +99,6 @@ export class SettingsComponent implements OnInit {
   togglePrivacy(): void {
     if (!this.currentUser) return;
     this.authService.togglePrivacy(this.currentUser.userId).subscribe(() => {
-      this.currentUser!.isPrivate = !this.currentUser!.isPrivate;
       this.snackBar.open(`Account is now ${this.currentUser!.isPrivate ? 'Private' : 'Public'}`, 'Close', { duration: 2000 });
       this.cdr.detectChanges();
     });
