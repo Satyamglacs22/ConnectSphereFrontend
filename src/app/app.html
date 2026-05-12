@@ -53,6 +53,13 @@
 
   <mat-menu #profileMenu="matMenu" xPosition="before" class="prism-menu">
     <div class="menu-header">
+      <div class="menu-avatar">
+        @if (currentUser()?.avatarUrl) {
+          <img [src]="currentUser()!.avatarUrl" alt="User Avatar" />
+        } @else {
+          <div class="menu-initials">{{ currentUser()?.fullName?.[0] }}</div>
+        }
+      </div>
       <div class="menu-user-info">
         <div class="name">{{ currentUser()?.fullName }}</div>
         <div class="handle">@{{ currentUser()?.userName }}</div>
