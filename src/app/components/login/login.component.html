@@ -1,38 +1,69 @@
-<div class="login-container">
-  <div class="bg-decoration">
-    <div class="circle c1"></div>
-    <div class="circle c2"></div>
+<div class="login-wrapper">
+  <!-- Left Side: Visuals & Branding -->
+  <div class="left-section">
+    <div class="overlay"></div>
+    <div class="branding-content">
+      <div class="logo-badge">
+        <mat-icon>polymer</mat-icon>
+        <span>ConnectSphere</span>
+      </div>
+      <div class="hero-text">
+        <h2 class="serif-title">Get Everything You Want</h2>
+        <p>Connect with the world and share your moments in a crystal-clear digital space.</p>
+      </div>
+      <div class="quote-area">
+        <span class="label">A WISE QUOTE</span>
+        <div class="divider"></div>
+        <p class="quote">"Connection is the energy that exists between people when they feel seen, heard, and valued."</p>
+      </div>
+    </div>
   </div>
 
-  <mat-card class="login-card">
-    <div class="logo-area">
-      <mat-icon class="logo-symbol animate-float">polymer</mat-icon>
-      <h1 class="text-gradient">ConnectSphere</h1>
-      <p>Step into your digital universe</p>
-    </div>
+  <!-- Right Side: Login Form -->
+  <div class="right-section">
+    <div class="form-container">
+      <div class="form-header">
+        <mat-icon class="mobile-logo">polymer</mat-icon>
+        <h1 class="serif-title">Welcome Back</h1>
+        <p>Enter your email and password to access your account</p>
+      </div>
 
-    <div class="form-group">
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email Address</mat-label>
-        <input matInput [(ngModel)]="loginData.email" placeholder="your@email.com" />
-        <mat-icon matSuffix>mail_outline</mat-icon>
-      </mat-form-field>
+      <div class="login-form">
+        <div class="input-group">
+          <label>Email Address</label>
+          <div class="custom-input">
+            <input type="email" [(ngModel)]="loginData.email" placeholder="Enter your email" />
+            <mat-icon>mail_outline</mat-icon>
+          </div>
+        </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Password</mat-label>
-        <input matInput [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" />
-        <button mat-icon-button matSuffix (click)="showPassword = !showPassword">
-          <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        <div class="input-group">
+          <label>Password</label>
+          <div class="custom-input">
+            <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="loginData.password" placeholder="Enter your password" />
+            <button class="toggle-btn" (click)="showPassword = !showPassword">
+              <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" />
+            <span>Remember me</span>
+          </label>
+          <a class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <button class="btn-primary" [disabled]="loading" (click)="login()">
+          {{ loading ? 'Authenticating...' : 'Sign In' }}
         </button>
-      </mat-form-field>
-    </div>
 
-    <button mat-raised-button color="primary" class="submit-btn" [disabled]="loading" (click)="login()">
-      {{ loading ? 'Authenticating...' : 'Sign In' }}
-    </button>
-
-    <div class="auth-footer">
-      New here? <a routerLink="/register">Create an account</a>
+        <div class="form-footer">
+          <span>New here?</span>
+          <a routerLink="/register">Create an account</a>
+        </div>
+      </div>
     </div>
-  </mat-card>
+  </div>
 </div>
