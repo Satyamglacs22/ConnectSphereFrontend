@@ -26,26 +26,17 @@
     </button>
   </div>
 
-  <!-- Media Section -->
+  <!-- Media Section (Grid Layout) -->
   @if (getMediaList().length > 0) {
-    <div class="post-media-container" (dblclick)="onDoubleTap()">
-      <div class="carousel-track" [style.transform]="'translateX(-' + (currentMediaIndex() * 100) + '%)'" style="display: flex; transition: transform 0.5s ease;">
-        @for (url of getMediaList(); track url) {
-          <div class="carousel-item" style="flex: 0 0 100%; width: 100%;">
-            <img [src]="url" class="main-media" alt="Post content" />
-          </div>
-        }
-      </div>
-      
-      @if (getMediaList().length > 1) {
-        <button mat-icon-button class="carousel-nav prev" (click)="prevMedia($event)" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white;">
-          <mat-icon>chevron_left</mat-icon>
-        </button>
-        <button mat-icon-button class="carousel-nav next" (click)="nextMedia($event)" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white;">
-          <mat-icon>chevron_right</mat-icon>
-        </button>
+    <div class="post-media-grid" [attr.data-count]="getMediaList().length" (dblclick)="onDoubleTap()">
+      @for (url of getMediaList().slice(0, 4); track url; let i = $index) {
+        <div class="grid-item" [class.more]="i === 3 && getMediaList().length > 4">
+          <img [src]="url" alt="Post content" />
+          @if (i === 3 && getMediaList().length > 4) {
+            <div class="overlay">+{{ getMediaList().length - 4 }}</div>
+          }
+        </div>
       }
-
       <mat-icon class="heart-pop" [class.animate]="showHeartPop()">favorite</mat-icon>
     </div>
   } @else {

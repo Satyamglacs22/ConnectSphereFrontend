@@ -78,21 +78,19 @@
       <mat-card-content>
         <p class="post-body">{{ post()!.content }}</p>
 
-        @if (getMediaList().length > 0) {
-          <div class="carousel-container">
-            <div class="carousel-track" [style.transform]="'translateX(-' + (currentMediaIndex() * 100) + '%)'">
-              @for (url of getMediaList(); track url) {
-                <div class="carousel-item">
-                  <img [src]="url" class="post-img" alt="Post media" />
+          <!-- Media Section (Grid Layout) -->
+          @if (getMediaList().length > 0) {
+            <div class="post-media-grid" [attr.data-count]="getMediaList().length">
+              @for (url of getMediaList().slice(0, 4); track url; let i = $index) {
+                <div class="grid-item" [class.more]="i === 3 && getMediaList().length > 4">
+                  <img [src]="url" alt="Post content" />
+                  @if (i === 3 && getMediaList().length > 4) {
+                    <div class="overlay">+{{ getMediaList().length - 4 }}</div>
+                  }
                 </div>
               }
             </div>
-            @if (getMediaList().length > 1) {
-              <button mat-icon-button class="nav-btn prev" (click)="prevMedia()"><mat-icon>chevron_left</mat-icon></button>
-              <button mat-icon-button class="nav-btn next" (click)="nextMedia()"><mat-icon>chevron_right</mat-icon></button>
-            }
-          </div>
-        }
+          }
 
         @if (getHashtags().length > 0) {
           <div class="hashtags">
