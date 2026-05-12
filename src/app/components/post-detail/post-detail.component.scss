@@ -158,9 +158,9 @@
 
     .reply-body {
       flex: 1;
-      .comment-author { font-weight: 600; font-size: 0.82rem; cursor: pointer; }
-      .comment-time { font-size: 0.7rem; opacity: 0.35; margin-left: 6px; }
-      p { margin: 3px 0; font-size: 0.84rem; color: rgba(255,255,255,0.7); }
+      .comment-author { font-weight: 600; font-size: 0.82rem; cursor: pointer; color: var(--prism-text); &:hover { color: var(--prism-primary); } }
+      .comment-time { font-size: 0.7rem; color: var(--prism-text-faint); margin-left: 6px; }
+      p { margin: 3px 0; font-size: 0.84rem; color: var(--prism-text); line-height: 1.4; }
     }
   }
 }
