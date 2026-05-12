@@ -1,56 +1,70 @@
-<div class="register-container">
-  <div class="register-card-wrapper">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title class="text-gradient">Create Account</mat-card-title>
-        <mat-card-subtitle>Join the ConnectSphere community today</mat-card-subtitle>
-      </mat-card-header>
+<div class="login-wrapper">
+  <!-- Left Side: Visuals & Branding -->
+  <div class="left-section">
+    <div class="overlay"></div>
+    <div class="branding-content">
+      <div class="logo-badge">
+        <mat-icon>polymer</mat-icon>
+        <span>ConnectSphere</span>
+      </div>
+      <div class="hero-text">
+        <h2 class="serif-title">Start Your Journey</h2>
+        <p>Join thousands of others in a digital space designed for meaningful connections.</p>
+      </div>
+    </div>
+  </div>
 
-      <mat-card-content>
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Username</mat-label>
-            <input matInput formControlName="userName" placeholder="Choose a username" />
-            <mat-icon matPrefix>alternate_email</mat-icon>
-          </mat-form-field>
+  <!-- Right Side: Register Form -->
+  <div class="right-section">
+    <div class="form-container">
+      <div class="form-header">
+        <mat-icon class="mobile-logo">polymer</mat-icon>
+        <h1 class="serif-title">Create Account</h1>
+        <p>Fill in the details to join the ConnectSphere community</p>
+      </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Full Name</mat-label>
-            <input matInput formControlName="fullName" placeholder="Enter your full name" />
-            <mat-icon matPrefix>person</mat-icon>
-          </mat-form-field>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="input-group">
+          <label>Username</label>
+          <div class="custom-input">
+            <input type="text" formControlName="userName" placeholder="Choose a username" />
+            <mat-icon>alternate_email</mat-icon>
+          </div>
+        </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Enter your email" />
-            <mat-icon matPrefix>email</mat-icon>
-          </mat-form-field>
+        <div class="input-group">
+          <label>Full Name</label>
+          <div class="custom-input">
+            <input type="text" formControlName="fullName" placeholder="Enter your full name" />
+            <mat-icon>person</mat-icon>
+          </div>
+        </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" placeholder="Create a password" />
-            <mat-icon matPrefix>lock</mat-icon>
-          </mat-form-field>
+        <div class="input-group">
+          <label>Email Address</label>
+          <div class="custom-input">
+            <input type="email" formControlName="email" placeholder="Enter your email" />
+            <mat-icon>mail_outline</mat-icon>
+          </div>
+        </div>
 
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            class="full-width submit-btn"
-            [disabled]="registerForm.invalid || loading"
-          >
-            @if (loading) {
-              <mat-spinner diameter="20"></mat-spinner>
-            } @else {
-              Create Account
-            }
-          </button>
-        </form>
-      </mat-card-content>
+        <div class="input-group">
+          <label>Password</label>
+          <div class="custom-input">
+            <input type="password" formControlName="password" placeholder="Create a password" />
+            <mat-icon>lock</mat-icon>
+          </div>
+        </div>
 
-      <mat-card-actions>
-        <p>Already have an account? <a routerLink="/login" class="login-link">Login here</a></p>
-      </mat-card-actions>
-    </mat-card>
+        <button type="submit" class="btn-primary" [disabled]="registerForm.invalid || loading">
+          {{ loading ? 'Creating Account...' : 'Create Account' }}
+        </button>
+
+        <div class="form-footer">
+          <span>Already have an account?</span>
+          <a routerLink="/login">Login here</a>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

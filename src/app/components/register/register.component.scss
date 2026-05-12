@@ -1,85 +1,165 @@
-.register-container {
+.login-wrapper {
   display: flex;
-  justify-content: center;
+  min-height: 100vh;
+  background: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+
+  .serif-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 800;
+  }
+}
+
+// ── Left Section (The Visual Side) ──────────────────────────
+.left-section {
+  flex: 1.2;
+  position: relative;
+  background: #0f172a; // Dark base
+  display: flex;
   align-items: center;
-  min-height: calc(100vh - 80px); // Subtracting toolbar height
-  padding: 40px 20px;
-  background-image: 
-    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
-    radial-gradient(circle at 90% 90%, rgba(168, 85, 247, 0.03) 0%, transparent 50%);
-
-  .register-card-wrapper {
-    width: 100%;
-    max-width: 500px;
-    perspective: 1000px;
+  justify-content: center;
+  padding: 60px;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('/images/login-bg.png') center/cover no-repeat;
+    opacity: 0.8;
   }
 
-  mat-card {
-    padding: 40px;
-    border-radius: 40px !important;
-    
-    mat-card-header {
-      flex-direction: column;
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.8));
+  }
+
+  .branding-content {
+    position: relative;
+    z-index: 10;
+    color: white;
+    width: 100%;
+    max-width: 600px;
+
+    .logo-badge {
+      display: flex;
       align-items: center;
-      text-align: center;
-      margin-bottom: 32px;
+      gap: 12px;
+      margin-bottom: 60px;
       
-      mat-card-title { 
-        font-size: 2.2rem; 
-        font-weight: 800; 
-        margin-bottom: 8px;
-        letter-spacing: -1px;
-      }
-      mat-card-subtitle { 
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: var(--prism-text-muted);
-      }
+      mat-icon { font-size: 32px; width: 32px; height: 32px; color: var(--prism-primary); }
+      span { font-weight: 800; font-size: 20px; letter-spacing: -0.5px; }
+    }
+
+    .hero-text {
+      margin-bottom: 80px;
+      h2 { font-size: 72px; line-height: 1.1; margin-bottom: 24px; letter-spacing: -2px; }
+      p { font-size: 18px; color: rgba(255, 255, 255, 0.7); line-height: 1.6; max-width: 480px; }
     }
   }
+}
 
-  .register-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
+// ── Right Section (The Form Side) ──────────────────────────
+.right-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: white;
 
-  .full-width {
+  .form-container {
     width: 100%;
-  }
+    max-width: 440px;
 
-  .submit-btn {
-    height: 64px !important;
-    border-radius: 24px !important;
-    font-size: 1.1rem !important;
-    font-weight: 800 !important;
-    margin-top: 16px;
-    text-transform: none;
-    letter-spacing: -0.2px;
-  }
+    .form-header {
+      margin-bottom: 40px;
+      text-align: left;
 
-  mat-card-actions {
-    margin-top: 24px;
-    padding: 0;
-    justify-content: center;
+      .mobile-logo { display: none; color: var(--prism-primary); font-size: 40px; width: 40px; height: 40px; margin-bottom: 24px; }
+      h1 { font-size: 48px; color: #0f172a; margin-bottom: 12px; letter-spacing: -1px; }
+      p { color: #64748b; font-size: 16px; line-height: 1.5; }
+    }
+  }
+}
+
+// ── Custom Form Styles ──────────────────────────
+.login-form {
+  .input-group {
+    margin-bottom: 20px;
     
-    p {
-      color: var(--prism-text-muted);
-      font-weight: 600;
-      font-size: 0.95rem;
-      
-      .login-link {
-        color: var(--prism-primary);
-        text-decoration: none;
-        font-weight: 800;
-        margin-left: 4px;
-        transition: all 0.3s;
+    label { display: block; font-weight: 700; font-size: 14px; color: #1e293b; margin-bottom: 10px; }
+    
+    .custom-input {
+      position: relative;
+      background: #f8fafc;
+      border-radius: 16px;
+      transition: all 0.3s;
+      border: 1px solid transparent;
+
+      input {
+        width: 100%;
+        height: 56px;
+        background: transparent;
+        border: none;
+        padding: 0 20px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #0f172a;
+        outline: none;
         
-        &:hover {
-          text-decoration: underline;
-          filter: brightness(0.8);
-        }
+        &::placeholder { color: #94a3b8; font-weight: 500; }
+      }
+
+      mat-icon { position: absolute; right: 20px; top: 16px; color: #94a3b8; }
+
+      &:focus-within {
+        background: white;
+        border-color: var(--prism-primary);
+        box-shadow: 0 10px 25px -10px rgba(99, 102, 241, 0.2);
       }
     }
+  }
+
+  .btn-primary {
+    width: 100%;
+    height: 64px;
+    background: #0f172a;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.2);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: #1e293b;
+      box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.3);
+    }
+    &:disabled { opacity: 0.6; cursor: not-allowed; }
+  }
+
+  .form-footer {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #64748b;
+    span { margin-right: 6px; }
+    a { color: var(--prism-primary); font-weight: 800; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+}
+
+// ── Responsiveness ──────────────────────────
+@media (max-width: 1024px) {
+  .left-section { display: none; }
+  .right-section { 
+    flex: 1; 
+    .form-container .form-header .mobile-logo { display: block; }
   }
 }
