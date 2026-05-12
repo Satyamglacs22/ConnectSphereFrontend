@@ -26,17 +26,34 @@
     </button>
   </div>
 
-  <!-- Media Section (Grid Layout) -->
+  <!-- Media Carousel -->
   @if (getMediaList().length > 0) {
-    <div class="post-media-grid" [attr.data-count]="getMediaList().length" (dblclick)="onDoubleTap()">
-      @for (url of getMediaList().slice(0, 4); track url; let i = $index) {
-        <div class="grid-item" [class.more]="i === 3 && getMediaList().length > 4">
-          <img [src]="url" alt="Post content" />
-          @if (i === 3 && getMediaList().length > 4) {
-            <div class="overlay">+{{ getMediaList().length - 4 }}</div>
+    <div class="post-carousel" (dblclick)="onDoubleTap()">
+      <div class="carousel-track" [style.transform]="'translateX(-' + (currentMediaIndex() * 100) + '%)'">
+        @for (url of getMediaList(); track url; let i = $index) {
+          <div class="carousel-item">
+            <img [src]="url" alt="Post content" loading="lazy" />
+          </div>
+        }
+      </div>
+
+      <!-- Navigation Arrows -->
+      @if (getMediaList().length > 1) {
+        <button mat-icon-button class="carousel-nav prev" (click)="prevMedia($event)" aria-label="Previous image">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-icon-button class="carousel-nav next" (click)="nextMedia($event)" aria-label="Next image">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+
+        <!-- Indicators -->
+        <div class="carousel-dots">
+          @for (dot of getMediaList(); track $index; let i = $index) {
+            <span class="dot" [class.active]="i === currentMediaIndex()"></span>
           }
         </div>
       }
+
       <mat-icon class="heart-pop" [class.animate]="showHeartPop()">favorite</mat-icon>
     </div>
   } @else {

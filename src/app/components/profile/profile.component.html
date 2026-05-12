@@ -83,6 +83,12 @@
           <img [src]="post.mediaUrl" />
         }
         
+        @if (post.mediaList && post.mediaList.length > 1) {
+          <div class="multi-indicator">
+            <mat-icon>collections</mat-icon>
+          </div>
+        }
+        
         <div class="media-overlay">
           <div class="overlay-item"><mat-icon>favorite</mat-icon> {{ post.likeCount }}</div>
           <div class="overlay-item"><mat-icon>chat_bubble</mat-icon> {{ post.commentCount }}</div>
