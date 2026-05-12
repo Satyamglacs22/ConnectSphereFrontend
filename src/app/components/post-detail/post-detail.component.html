@@ -167,7 +167,7 @@
                 <mat-icon class="sm-icon">reply</mat-icon> Reply
               </button>
 
-              @if (comment.replyCount > 0 && !replies()[comment.commentId]?.length) {
+              @if (comment.replyCount > 0 && !replies()[comment.commentId]) {
                 <button mat-button class="reply-btn" (click)="loadReplies(comment.commentId)">
                   View {{ comment.replyCount }} {{ comment.replyCount === 1 ? 'reply' : 'replies' }}
                 </button>
