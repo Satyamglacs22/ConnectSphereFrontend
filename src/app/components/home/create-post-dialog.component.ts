@@ -46,12 +46,18 @@ import { User } from '../../models/user.model';
             <div class="media-preview-container">
               <img [src]="mediaUrls[0]" class="main-preview" />
               
+              <div class="preview-overlay">
+                <button mat-mini-fab color="primary" class="overlay-btn" (click)="$event.stopPropagation(); fileInput.click()" *ngIf="selectedFiles.length < 5" matTooltip="Add another photo">
+                  <mat-icon>add_a_photo</mat-icon>
+                </button>
+                <button mat-mini-fab color="warn" class="overlay-btn" (click)="$event.stopPropagation(); mediaUrls = []; selectedFiles = []" matTooltip="Clear all">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+
               @if (mediaUrls.length > 1) {
-                <div class="count-badge">+{{ mediaUrls.length - 1 }} more</div>
+                <div class="count-badge">{{ mediaUrls.length }} photos selected</div>
               }
-              <button mat-icon-button class="clear-media" (click)="$event.stopPropagation(); mediaUrls = []; selectedFiles = []">
-                <mat-icon>cancel</mat-icon>
-              </button>
             </div>
           }
           <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" multiple style="display: none" />
@@ -141,10 +147,19 @@ import { User } from '../../models/user.model';
       width: 100%; height: 100%; position: relative; background: #000;
       .main-preview { width: 100%; height: 100%; object-fit: contain; }
       .count-badge {
-        position: absolute; bottom: 24px; right: 24px;
-        background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 14px; font-size: 13px; font-weight: 800;
+        position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+        background: rgba(255,255,255,0.9); color: #1e293b; padding: 8px 20px; border-radius: 20px; font-size: 13px; font-weight: 800;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       }
-      .clear-media { position: absolute; top: 24px; right: 24px; color: white; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
+      .preview-overlay {
+        position: absolute; top: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px;
+        .overlay-btn { 
+          transform: scale(0.9); 
+          background: rgba(255,255,255,0.9) !important; color: #1e293b !important;
+          &[color="warn"] { color: #ef4444 !important; }
+          &:hover { transform: scale(1); background: white !important; }
+        }
+      }
     }
 
     .details-area {
